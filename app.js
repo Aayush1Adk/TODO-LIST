@@ -1,8 +1,18 @@
 const express = require('express');
 const app = express();
 
-const connectDB = require('./config/db');
 require('dotenv').config();
+const connectDB = require('./config/db');
+
+const { deleteExpiredTasks } = require('./controllers/taskController');
+
+setInterval(async () => {
+    try {
+        await deleteExpiredTasks();
+    } catch (error) {
+        console.error('Error deleting expired tasks:', error);
+    }
+}, 60000);
 
 //middleware
 app.use(express.json());
@@ -16,6 +26,8 @@ app.get('/', (req, res) => {
 
 //database connection
 connectDB();
+
+
 
 const PORT = 3000;
 
